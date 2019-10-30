@@ -1,0 +1,113 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[20]:
+
+
+import pandas as pd
+import numpy as np
+import os
+import spacy
+from spacy import displacy
+from collections import Counter
+import en_core_web_sm
+import re
+
+
+# In[4]:
+
+
+file_dir = os.path.join(os.path.dirname(os.getcwd()), "Queries")
+path_to_categories_csv=os.path.join(file_dir, "Categorized_Queries.csv")
+un_categorized_df=pd.read_csv(path_to_categories_csv)
+un_categorized_df["Category"] = [0]*len(un_categorized_df)
+categorized_df = un_categorized_df
+
+
+# In[5]:
+
+
+categorized_df.head()
+
+
+# In[81]:
+
+
+health_keywords = []
+sexism_keywords = []
+
+with open("health.txt") as inp:
+    txt = inp.read()
+    health_keywords = txt.split(",")
+    
+with open("sexism.txt") as inp:
+    txt = inp.read()
+    sexism_keywors = txt.split(",")    
+
+sexism_keywords    
+
+
+# In[72]:
+
+
+"|".join(health_keywords)
+
+
+# In[92]:
+
+
+def setCategory(query):
+    val = 0
+    if re.search(r"\blaw(s)?\b|\bpolicies\b|\bpolicy\b|\bpolitic(s)?\b|\benvironment(al)?\b|\beconomy\b|\beconomic(s)?\b|\bpolitical.*?party\b|\bpolitical.*?parties\b|\bgovernment(al)?\b", query, re.IGNORECASE):
+        val = 6
+    if re.search("|".join(health_keywords), query, re.IGNORECASE):
+        val = 3
+    if re.search("|".join(sexism_keywords), query, re.IGNORECASE):
+        val = 1
+    return val
+
+
+# In[93]:
+
+
+categorized_df["Category"] = categorized_df["Search Query"].apply(setCategory)
+
+
+# In[98]:
+
+
+categorized_df
+
+
+# In[17]:
+
+
+nlp = en_core_web_sm.load()
+doc = nlp('Rajib das')
+
+
+# In[ ]:
+
+
+print([(X.text, X.label_) for X in doc.ents])
+
+
+# In[53]:
+
+
+s = "environmental act"
+t = "reaction"
+re.search(r'\bact\b', t)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
